@@ -50,7 +50,7 @@ final class Reverse {
     private static Map<String, Condition> reverseExceptions = new HashMap<>();
     static {
         try {
-            reverseExceptions.put(Tags.KEY_SIDE, compilePattern(Tags.KEY_HIGHWAY + "=" + Tags.VALUE_CYCLIST_WAITING_AID));
+            reverseExceptions.put(Tags.KEY_SIDE, compilePattern("highway=cyclist_waiting_aid -child (type:way highway: (oneway? OR oneway=\"-1\"))"));
         } catch (JosmFilterParseException e) {
             Log.e(DEBUG_TAG, e.getMessage());
         }
@@ -97,6 +97,7 @@ final class Reverse {
     private static boolean matchExceptions(@NonNull OsmElement e, @NonNull String key) {
         Condition c = reverseExceptions.get(key);
         if (c != null) {
+            c.reset();
             Wrapper meta = new Wrapper();
             meta.setElement(e);
             return c.eval(Wrapper.toJosmFilterType(e), meta, e.getTags());
